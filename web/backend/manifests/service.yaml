@@ -1,0 +1,16 @@
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: eval-rest
+  type: ClusterIP
+  ports:
+  - name: eval-rest
+    protocol: TCP
+    port: 8000
+    targetPort: 8000
+
+
