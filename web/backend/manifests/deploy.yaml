@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eval-rest
+spec:
+  selector:
+    matchLabels:
+      app: eval-rest
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: eval-rest
+    spec:
+      containers:
+      - name: eval-rest
+        image: registry.hamdocker.ir/amin-masoudi/evaluation_rest:v1.1
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+        envFrom:
+          - secretRef:
+              name: eval-rest-secret
+          - configMapRef:
+              name: eval-rest-config
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+        - name: logs
+          mountPath: /app/logs
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Tehran
+        - name: logs
+          hostPath:
+            path: /home/amin/logs/projects/evaluation
